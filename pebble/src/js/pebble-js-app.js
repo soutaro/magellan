@@ -15,7 +15,7 @@ Pebble.addEventListener('ready',
 Pebble.addEventListener('showConfiguration', 
   function(e) {
     var json = JSON.stringify(App.setting);
-    Pebble.openURL("http://rodrigo.local:9292/setting.html#" + encodeURIComponent(json));
+    Pebble.openURL("https://immense-spire-6656.herokuapp.com/setting.html#" + encodeURIComponent(json));
   }
 );
 
