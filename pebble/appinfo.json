@@ -1,0 +1,21 @@
+{
+  "uuid": "724ea8a1-1548-47ba-ba21-8d10a2183cf0",
+  "shortName": "New Relic",
+  "longName": "New Relic Monitor",
+  "companyName": "Soutaro Matsumoto",
+  "versionCode": 1,
+  "versionLabel": "1.0",
+  "watchapp": {
+    "watchface": true
+  },
+  "appKeys": {
+    "KEY_THROUGHPUT": 0,
+    "KEY_APPDEX": 1,
+    "KEY_TIME": 2,
+    "KEY_STATUS": 3,
+    "KEY_ERROR": 4
+  },
+  "resources": {
+    "media": []
+  }
+}
