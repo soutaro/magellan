@@ -17,5 +17,6 @@
   },
   "resources": {
     "media": []
-  }
+  },
+  "capabilities": [ "configurable" ]
 }

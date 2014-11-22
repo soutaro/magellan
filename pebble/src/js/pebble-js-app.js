@@ -1,7 +1,37 @@
-// Listen for when the watchface is opened
+var App = {
+  setting: {
+    appid: "",
+    apikey: ""
+  }
+};
+
 Pebble.addEventListener('ready', 
   function(e) {
-    console.log("PebbleKit JS ready!");
+    App.setting.appid = localStorage.getItem("nr.appid") || "";
+    App.setting.apikey = localStorage.getItem("nr.apikey") || "";
+  }
+);
+
+Pebble.addEventListener('showConfiguration', 
+  function(e) {
+    var json = JSON.stringify(App.setting);
+    Pebble.openURL("http://rodrigo.local:9292/setting.html#" + encodeURIComponent(json));
+  }
+);
+
+Pebble.addEventListener('webviewclosed', 
+  function(e) {
+    if (e.response) {
+      var configuration = JSON.parse(decodeURIComponent(e.response));
+
+      App.setting.appid = configuration.appid || "";
+      App.setting.apikey = configuration.apikey || "";
+
+      localStorage.setItem("nr.appid", App.setting.appid);
+      localStorage.setItem("nr.apikey", App.setting.apikey);
+
+      reloadNewRelic();
+    }
   }
 );
 
@@ -19,27 +49,31 @@ function sendResponseToPebble(application) {
 }
 
 function sendErrorToPebble() {
+  console.log("sending error message to pebble...");
   error = { "KEY_ERROR": 1 }
   Pebble.sendAppMessage(error)
 }
 
-// Listen for when an AppMessage is received
-Pebble.addEventListener('appmessage',
-  function(e) {
-    var req = new XMLHttpRequest();
-    req.setRequestHeader('X-API-Key', 'xxxxxxxxxxxxxxxxxx');
-    req.open('GET', 'https://api.newrelic.com/v2/applications/xxxxxxxxxx.json', true);
-    req.onload = function(e) {
-      if (req.readyState == 4 && req.status == 200) {
-        sendResponseToPebble(JSON.parse(req.responseText).application);
-      } else {
-        sendErrorToPebble();
-      }
-    }
-    req.onerror = function(e) {
+function reloadNewRelic() {
+  var req = new XMLHttpRequest();
+  req.setRequestHeader('X-API-Key', App.setting.apikey);
+  req.open('GET', 'https://api.newrelic.com/v2/applications/'+App.setting.appid+'.json', true);
+  req.onload = function(e) {
+    if (req.readyState == 4 && req.status == 200) {
+      sendResponseToPebble(JSON.parse(req.responseText).application);
+    } else {
       sendErrorToPebble();
     }
+  }
+  req.onerror = function(e) {
+    sendErrorToPebble();
+  }
 
-    req.send(null);
+  req.send(null);
+}
+
+Pebble.addEventListener('appmessage',
+  function(e) {
+    reloadNewRelic();
   }                     
 );
