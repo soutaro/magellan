@@ -17,7 +17,7 @@ static TextLayer *appdex_value_layer;
 static TextLayer *time_title_layer;
 static TextLayer *time_value_layer;
 static TextLayer *footer_line_layer;
-static time_t last_updated_at;
+static time_t next_update_at;
 
 static void update_time_layer() {
   time_t temp = time(NULL); 
@@ -84,9 +84,12 @@ static void update_values(int32_t throughput, int32_t appdex100, int32_t time, c
 }
 
 void kick_update() {
-  if (time(NULL) - last_updated_at < 60) {
+  if (time(NULL) < next_update_at) {
+    APP_LOG(APP_LOG_LEVEL_INFO, "[kick_update] update will be in %d seconds", (int)(next_update_at - time(NULL)));
     return;
   }
+
+  APP_LOG(APP_LOG_LEVEL_INFO, "[kick_update] updating...");
 
   DictionaryIterator *iter;
   app_message_outbox_begin(&iter);
@@ -184,6 +187,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   int32_t throughput = 0;
   int32_t appdex = 0;
   int32_t response_time = 0;
+  int32_t delay = 300;
   char* status = NULL;
 
   Tuple *t = dict_read_first(iterator);
@@ -213,7 +217,8 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     t = dict_read_next(iterator);
   }
 
-  last_updated_at = time(NULL);
+  APP_LOG(APP_LOG_LEVEL_INFO, "[invox_received_callback] will update in %d seconds", (int)delay);
+  next_update_at = time(NULL) + delay;
   update_values(throughput, appdex, response_time, status);
 }
 
@@ -226,15 +231,11 @@ static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResul
 }
 
 static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
-  APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits unit_changed) {
   update_time_layer();
-
-  if(tick_time->tm_min % 5 == 0) {
-    kick_update();
-  }
+  kick_update();
 }
 
 static void init(void) {
