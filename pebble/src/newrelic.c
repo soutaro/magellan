@@ -153,8 +153,8 @@ static void window_load(Window *window) {
   text_layer_set_background_color(footer_line_layer, GColorBlack);
   layer_add_child(window_layer, text_layer_get_layer(footer_line_layer));
 
-  text_layer_set_text(time_layer, "12:33");
-  text_layer_set_text(status_layer, ".......");
+  text_layer_set_text(time_layer, "00:00");
+  text_layer_set_text(status_layer, "......");
   text_layer_set_text(throughput_title_layer, "Throughput");
   text_layer_set_text(throughput_value_layer, "0");
   text_layer_set_text(appdex_title_layer, "Appdex");
