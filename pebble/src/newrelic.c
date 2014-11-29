@@ -281,7 +281,6 @@ static void deinit(void) {
 
 int main(void) {
   init();
-  kick_update();
   app_event_loop();
   deinit();
 }
