@@ -187,7 +187,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   int32_t throughput = 0;
   int32_t appdex = 0;
   int32_t response_time = 0;
-  int32_t delay = 300;
+  int32_t delay = 0;
   char* status = NULL;
 
   Tuple *t = dict_read_first(iterator);
@@ -205,6 +205,9 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
       break;
     case KEY_STATUS:
       status = t->value->cstring;
+      if (strcmp(status, "green") == 0) {
+        delay = 300;
+      }
       break;
     case KEY_ERROR:
       status = "error";
