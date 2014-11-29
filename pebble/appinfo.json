@@ -16,7 +16,13 @@
     "KEY_ERROR": 4
   },
   "resources": {
-    "media": []
+    "media": [
+      {
+        "type": "png",
+        "name": "PAIRING_ERROR_IMAGE",
+        "file": "pairing_error_mark.png"
+      }
+    ]
   },
   "capabilities": [ "configurable" ]
 }

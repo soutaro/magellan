@@ -17,6 +17,8 @@ static TextLayer *appdex_value_layer;
 static TextLayer *time_title_layer;
 static TextLayer *time_value_layer;
 static TextLayer *footer_line_layer;
+static GBitmap *pairing_error_image;
+static BitmapLayer *pairing_error_layer;
 static time_t next_update_at;
 
 static void update_time_layer() {
@@ -156,6 +158,11 @@ static void window_load(Window *window) {
   text_layer_set_background_color(footer_line_layer, GColorBlack);
   layer_add_child(window_layer, text_layer_get_layer(footer_line_layer));
 
+  pairing_error_image = gbitmap_create_with_resource(RESOURCE_ID_PAIRING_ERROR_IMAGE);
+  pairing_error_layer = bitmap_layer_create(GRect(bounds.size.w - 4 - 17, 4, 17, 17));
+  bitmap_layer_set_bitmap(pairing_error_layer, pairing_error_image);
+  layer_add_child(window_layer, bitmap_layer_get_layer(pairing_error_layer));
+
   text_layer_set_text(time_layer, "00:00");
   text_layer_set_text(status_layer, "......");
   text_layer_set_text(throughput_title_layer, "Throughput");
@@ -164,6 +171,7 @@ static void window_load(Window *window) {
   text_layer_set_text(appdex_value_layer, "0");
   text_layer_set_text(time_title_layer, "Response");
   text_layer_set_text(time_value_layer, "0ms");
+  layer_set_hidden(bitmap_layer_get_layer(pairing_error_layer), true);
 }
 
 static void window_unload(Window *window) {
@@ -177,6 +185,8 @@ static void window_unload(Window *window) {
   text_layer_destroy(time_title_layer);
   text_layer_destroy(time_value_layer);
   text_layer_destroy(footer_line_layer);
+  gbitmap_destroy(pairing_error_image);
+  bitmap_layer_destroy(pairing_error_layer);
 }
 
 static void tap_handler(AccelAxisType axis, int32_t direction) {
@@ -231,9 +241,11 @@ static void inbox_dropped_callback(AppMessageResult reason, void *context) {
 
 static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
   APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
+  layer_set_hidden(bitmap_layer_get_layer(pairing_error_layer), false);
 }
 
 static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
+  layer_set_hidden(bitmap_layer_get_layer(pairing_error_layer), true);
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits unit_changed) {
