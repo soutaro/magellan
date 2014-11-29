@@ -101,14 +101,14 @@ static void window_load(Window *window) {
   background_layer = text_layer_create(bounds);
   layer_add_child(window_layer, text_layer_get_layer(background_layer));
 
-  time_layer = text_layer_create(GRect(5, 5, width, 30));
+  time_layer = text_layer_create(GRect(5, 15, width, 30));
   text_layer_set_font(time_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
   text_layer_set_background_color(time_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(time_layer));
 
-  status_layer = text_layer_create(GRect(5, 35, width, 50));
-  text_layer_set_font(status_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
+  status_layer = text_layer_create(GRect(0, 50, width+10, 50));
+  text_layer_set_font(status_layer, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK));
   text_layer_set_text_alignment(status_layer, GTextAlignmentCenter);
   text_layer_set_background_color(status_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(status_layer));
