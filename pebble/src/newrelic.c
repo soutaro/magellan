@@ -40,10 +40,15 @@ static void update_values(int32_t throughput, int32_t appdex100, int32_t time, c
   static char throughput_buf[10];
   static char appdex_buf[10];
   static char time_buf[10];
-  static char status_buf[10];
+  static char status_buf[10] = { 0 };
 
   GColor bg_color;
   GColor fg_color;
+
+  if (status_buf[0] && status_buf[0] - status[0] != 'A' - 'a') {
+    APP_LOG(APP_LOG_LEVEL_INFO, "[update_values] status changed to %s", status);
+    vibes_double_pulse();
+}
 
   if (throughput > 1000) {
     snprintf(throughput_buf, 30, "%d,%03d", (int)throughput/1000, (int)throughput%1000);
